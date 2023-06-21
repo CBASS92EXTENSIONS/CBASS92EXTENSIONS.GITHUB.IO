@@ -1,0 +1,55 @@
+(function (ext) {
+  var iframe;
+  var isIframeLoaded = false;
+
+  ext.addIframe = function (url, width, height) {
+    if (isIframeLoaded) {
+      return;
+    }
+
+    iframe = document.createElement('iframe');
+    iframe.src = url;
+    iframe.width = width;
+    iframe.height = height;
+
+    document.body.appendChild(iframe);
+    isIframeLoaded = true;
+  };
+
+  ext.turnIframeBlackAndWhite = function () {
+    if (!isIframeLoaded) {
+      return;
+    }
+
+    iframe.style.filter = 'grayscale(100%)';
+  };
+
+  ext.getIframeUrl = function () {
+    if (!isIframeLoaded) {
+      return '';
+    }
+
+    return iframe.src;
+  };
+
+  ext._shutdown = function () {};
+
+  ext._getStatus = function () {
+    if (isIframeLoaded) {
+      return { status: 2, msg: 'Extension ready' };
+    } else {
+      return { status: 1, msg: 'Extension not ready' };
+    }
+  };
+
+  var descriptor = {
+    blocks: [
+      [' ', 'add iframe from URL %s width %n height %n', 'addIframe', '', 400, 300],
+      [' ', 'turn iframe black and white', 'turnIframeBlackAndWhite'],
+      ['r', 'get iframe URL', 'getIframeUrl'],
+    ],
+    menus: {},
+  };
+
+  ScratchExtensions.register('Iframe Extension', descriptor, ext);
+})(window.ScratchExtensions || (window.ScratchExtensions = {}));
