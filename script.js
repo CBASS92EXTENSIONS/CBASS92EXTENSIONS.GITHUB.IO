@@ -1,22 +1,20 @@
+// Initialize the OpenAI library with your API key
+openai.init('YOUR_API_KEY');
+
 // Create a function to send a message to ChatGPT
 async function sendMessage(message) {
   // Send a POST request to the ChatGPT API
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer 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',
-    },
-    body: JSON.stringify({
-      'messages': [{'role': 'system', 'content': 'You are User'}, {'role': 'user', 'content': message}],
-    }),
+  const response = await openai.complete({
+    engine: 'text-davinci-003',
+    prompt: 'You are User: ' + message,
+    maxTokens: 50,
+    temperature: 0.7,
+    n: 1,
+    stop: ['\n']
   });
 
-  // Parse the response JSON
-  const data = await response.json();
-
   // Return the generated message
-  return data.choices[0].message.content;
+  return response.choices[0].text;
 }
 
 // Function to handle user messages and update the chat interface
